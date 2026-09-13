@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saffron & Spice Bistro | Digital QR Menu & Table Booking Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    h1, h2, h3, .font-heading { font-family: 'Outfit', sans-serif; }
+  </style>
+</head>
+<body class="bg-amber-950/10 text-slate-800 antialiased selection:bg-amber-600 selection:text-white">
+
+  <!-- Top Demo Return Ribbon -->
+  <div class="bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 text-white text-xs sm:text-sm py-2 px-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
+    <a href="index.html" class="inline-flex items-center font-bold hover:underline">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+      Back to Bubbli.in
+    </a>
+    <div class="hidden sm:block text-xs text-amber-100">
+      🍽️ <strong>Live Demo:</strong> Restaurant, Cafe & QR Digital Menu Website
+    </div>
+    <a href="https://wa.me/919739130926?text=Hi%20Bubbli!%20I%20am%20a%20Restaurant%20owner%20and%20want%20this%20website%20%2B%20QR%20menu." target="_blank" class="bg-white text-amber-800 font-bold px-3 py-1 rounded-lg text-xs transition-transform hover:scale-105 shadow">
+      Get This for ₹4,999 &rarr;
+    </a>
+  </div>
+
+  <!-- Hero Header -->
+  <header class="bg-stone-900 text-white py-12 px-4 text-center relative overflow-hidden">
+    <div class="max-w-4xl mx-auto relative z-10">
+      <div class="inline-block bg-amber-500/20 text-amber-300 text-xs font-bold px-3.5 py-1 rounded-full border border-amber-500/30 mb-3">
+        🌿 Pure Gourmet Dining • Craft Beverages
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-extrabold font-heading text-white">Saffron & Spice Bistro</h1>
+      <p class="text-amber-200/80 text-sm sm:text-base mt-2 max-w-xl mx-auto">
+        Handcrafted woodfired delicacies, authentic tandoori flavours, and artisan espresso brewed fresh daily.
+      </p>
+
+      <div class="flex flex-wrap justify-center gap-3 mt-6">
+        <a href="#menu" class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-md">
+          📖 Browse Digital Menu
+        </a>
+        <a href="#reservation" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all flex items-center space-x-2 shadow-md">
+          <span>📅 Table Reservation</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Menu Section -->
+  <section id="menu" class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    <!-- Category Filter Tabs -->
+    <div class="flex justify-center flex-wrap gap-2 mb-10">
+      <button onclick="filterMenu('all', this)" class="menu-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-amber-600 text-white shadow-md">All Delights</button>
+      <button onclick="filterMenu('starters', this)" class="menu-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white text-stone-700 hover:bg-amber-100">Starters & Tandoor</button>
+      <button onclick="filterMenu('mains', this)" class="menu-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white text-stone-700 hover:bg-amber-100">Artisan Mains & Biryani</button>
+      <button onclick="filterMenu('drinks', this)" class="menu-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white text-stone-700 hover:bg-amber-100">Beverages & Desserts</button>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="grid sm:grid-cols-2 gap-6" id="menu-items">
+      
+      <!-- Item 1 -->
+      <div class="menu-card starters bg-white p-5 rounded-2xl shadow-sm border border-stone-200 flex justify-between items-start">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 border border-emerald-600 p-0.5 flex items-center justify-center"><span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span></span>
+            <h3 class="font-bold text-stone-900 text-base">Paneer Tikka Angara</h3>
+          </div>
+          <p class="text-xs text-stone-500">Char-grilled cottage cheese marinated with smoked royal spices.</p>
+          <div class="text-sm font-extrabold text-amber-700 pt-1">₹340</div>
+        </div>
+        <button onclick="addToOrder('Paneer Tikka Angara', 340)" class="bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">
+          + Add
+        </button>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="menu-card starters bg-white p-5 rounded-2xl shadow-sm border border-stone-200 flex justify-between items-start">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 border border-red-600 p-0.5 flex items-center justify-center"><span class="w-1.5 h-1.5 bg-red-600 rounded-full"></span></span>
+            <h3 class="font-bold text-stone-900 text-base">Murg Malai Kebab</h3>
+          </div>
+          <p class="text-xs text-stone-500">Melt-in-mouth chicken infused with creamy cardamom & cheese.</p>
+          <div class="text-sm font-extrabold text-amber-700 pt-1">₹420</div>
+        </div>
+        <button onclick="addToOrder('Murg Malai Kebab', 420)" class="bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">
+          + Add
+        </button>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="menu-card mains bg-white p-5 rounded-2xl shadow-sm border border-stone-200 flex justify-between items-start">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 border border-red-600 p-0.5 flex items-center justify-center"><span class="w-1.5 h-1.5 bg-red-600 rounded-full"></span></span>
+            <h3 class="font-bold text-stone-900 text-base">Awadhi Dum Gosht Biryani</h3>
+          </div>
+          <p class="text-xs text-stone-500">Slow cooked long-grain basmati with tender lamb & saffron.</p>
+          <div class="text-sm font-extrabold text-amber-700 pt-1">₹490</div>
+        </div>
+        <button onclick="addToOrder('Awadhi Dum Gosht Biryani', 490)" class="bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">
+          + Add
+        </button>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="menu-card drinks bg-white p-5 rounded-2xl shadow-sm border border-stone-200 flex justify-between items-start">
+        <div class="space-y-1">
+          <div class="flex items-center space-x-2">
+            <span class="w-3.5 h-3.5 border border-emerald-600 p-0.5 flex items-center justify-center"><span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span></span>
+            <h3 class="font-bold text-stone-900 text-base">Alphonso Mango Kulfi Jar</h3>
+          </div>
+          <p class="text-xs text-stone-500">Artisan slow-reduced milk kulfi topped with pistachios & mango pulp.</p>
+          <div class="text-sm font-extrabold text-amber-700 pt-1">₹190</div>
+        </div>
+        <button onclick="addToOrder('Alphonso Mango Kulfi Jar', 190)" class="bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">
+          + Add
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Live Cart Bar / Tray -->
+    <div id="cart-tray" class="mt-8 bg-stone-900 text-white p-4 sm:p-5 rounded-2xl flex items-center justify-between shadow-xl">
+      <div>
+        <span class="text-xs text-amber-400 font-bold uppercase block">Your WhatsApp Order</span>
+        <span id="cart-count" class="text-sm font-medium">0 items selected</span>
+      </div>
+      <button onclick="sendOrderWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center space-x-2">
+        <span>Order via WhatsApp &rarr;</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Reservation Section -->
+  <section id="reservation" class="py-16 bg-stone-900 text-white">
+    <div class="max-w-2xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-extrabold font-heading">Book a Dining Table</h2>
+      <p class="text-stone-400 text-sm mt-1">Direct instant table reservation confirmation.</p>
+
+      <form id="res-form" class="mt-8 grid sm:grid-cols-2 gap-4 text-left bg-stone-800 p-6 rounded-2xl border border-stone-700">
+        <div>
+          <label class="block text-xs font-semibold text-stone-300 mb-1">Your Name</label>
+          <input type="text" id="res-name" required placeholder="Aditya Roy" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-400 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-stone-300 mb-1">Guests / Seats</label>
+          <input type="number" id="res-guests" min="1" max="20" value="2" required class="w-full bg-stone-900 border border-stone-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-400 focus:outline-none" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-stone-300 mb-1">Time & Special Requests</label>
+          <input type="text" id="res-time" required placeholder="Tonight 8:30 PM, Outdoor Seating" class="w-full bg-stone-900 border border-stone-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-400 focus:outline-none" />
+        </div>
+        <div class="sm:col-span-2 mt-2">
+          <button type="submit" class="w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-sm rounded-xl transition-all">
+            Reserve Table via WhatsApp &rarr;
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Demo Page Footer -->
+  <footer class="bg-stone-950 text-stone-500 py-8 text-center text-xs">
+    <p>© 2024 Saffron & Spice Bistro • Demo Website Built By <a href="index.html" class="text-amber-400 font-bold hover:underline">Bubbli Technologies</a></p>
+  </footer>
+
+  <script>
+    let cart = [];
+    function addToOrder(item, price) {
+      cart.push({ item, price });
+      document.getElementById('cart-count').textContent = `${cart.length} item(s) - Total: ₹${cart.reduce((a,c)=>a+c.price,0)}`;
+    }
+    function sendOrderWhatsApp() {
+      if(cart.length === 0) {
+        alert('Please add items to your order first!');
+        return;
+      }
+      const orderList = cart.map(i => `${i.item} (₹${i.price})`).join(', ');
+      const total = cart.reduce((a,c)=>a+c.price,0);
+      const text = `Hi Saffron & Spice! I want to place an order:\nItems: ${orderList}\nTotal: ₹${total}`;
+      window.open(`https://wa.me/919739130926?text=${encodeURIComponent(text)}`, '_blank');
+    }
+    function filterMenu(cat, btn) {
+      document.querySelectorAll('.menu-btn').forEach(b => {
+        b.classList.remove('bg-amber-600', 'text-white', 'shadow-md');
+        b.classList.add('bg-white', 'text-stone-700');
+      });
+      btn.classList.add('bg-amber-600', 'text-white', 'shadow-md');
+      btn.classList.remove('bg-white', 'text-stone-700');
+
+      document.querySelectorAll('.menu-card').forEach(card => {
+        if(cat === 'all' || card.classList.contains(cat)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+    document.getElementById('res-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('res-name')?.value || 'Guest';
+      const guests = document.getElementById('res-guests')?.value || '2';
+      const time = document.getElementById('res-time')?.value || 'Tonight';
+      const text = `Hi Saffron & Spice! I want to book a table.\nName: ${name}\nGuests: ${guests}\nTiming: ${time}`;
+      window.open(`https://wa.me/919739130926?text=${encodeURIComponent(text)}`, '_blank');
+    });
+  </script>
+</body>
+</html>

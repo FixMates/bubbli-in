@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bubbli.in/sitemap.xml

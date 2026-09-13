@@ -9,6 +9,7 @@
   --accent-emerald: #10b981;
   --accent-rose: #f43f5e;
   --accent-amber: #f59e0b;
+  --accent-purple: #8b5cf6;
   
   --bg-main: #0b1329;
   --bg-gradient: radial-gradient(circle at 50% 0%, #172554 0%, #0b1329 70%, #080d1c 100%);
@@ -33,15 +34,15 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 /* Glassmorphic Surfaces */
 .glass-panel {
-  background: rgba(15, 28, 64, 0.65);
+  background: rgba(15, 28, 64, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(147, 197, 253, 0.16);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
 }
 
 .glass-nav {
-  background: rgba(11, 19, 41, 0.88);
+  background: rgba(11, 19, 41, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(147, 197, 253, 0.12);
@@ -51,19 +52,36 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: rgba(17, 34, 76, 0.5);
   backdrop-filter: blur(14px);
   border: 1px solid rgba(147, 197, 253, 0.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
   border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.3);
-  background: rgba(22, 44, 98, 0.65);
+  box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.35);
+  background: rgba(22, 44, 98, 0.7);
 }
 
-/* Eye-Catching Gradient Typography */
+/* Navigation Active Link State */
+.nav-link.active {
+  color: #22d3ee !important;
+  position: relative;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6);
+  border-radius: 2px;
+}
+
+/* Gradient Typography */
 .gradient-text-hero {
-  background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 35%, #a78bfa 70%, #f472b6 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 30%, #c084fc 70%, #f472b6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -80,16 +98,22 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   -webkit-text-fill-color: transparent;
 }
 
+.gradient-text-purple {
+  background: linear-gradient(135deg, #c084fc 0%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* Glowing Ambient Orbs */
 .orb-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
+  filter: blur(100px);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Animations */
+/* Micro-animations */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
@@ -101,21 +125,15 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 @keyframes pulseWhatsApp {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6);
   }
   50% {
-    box-shadow: 0 0 0 16px rgba(37, 211, 102, 0);
+    box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
   }
 }
 
 .whatsapp-pulse {
   animation: pulseWhatsApp 2s infinite;
-}
-
-/* Promo Tag Ribbon & Badge */
-.promo-badge {
-  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
 /* Accordion Transition */
@@ -134,31 +152,20 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   transform: rotate(180deg);
 }
 
-/* Demo Browser Mockup Frame */
-.mockup-browser {
-  border-radius: 1.25rem;
-  overflow: hidden;
-  border: 1px solid rgba(147, 197, 253, 0.2);
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.7);
-  background: #0f1c3f;
+/* Scroll Reveal Animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-.mockup-header {
-  background: #0a142e;
-  padding: 0.75rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-bottom: 1px solid rgba(147, 197, 253, 0.1);
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.mockup-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-/* Scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
