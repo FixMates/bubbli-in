@@ -1,60 +1,75 @@
-/* Bubbli.in - Custom Styling & Micro-interactions */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+/* Bubbli.in - Vibrant, High-Appeal Theme & Design System */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
   --primary: #3b82f6;
-  --primary-dark: #1d4ed8;
+  --primary-hover: #2563eb;
+  --secondary: #6366f1;
   --accent-cyan: #06b6d4;
   --accent-emerald: #10b981;
-  --accent-purple: #8b5cf6;
-  --bg-dark: #090d16;
-  --card-dark: #111827;
-  --border-glow: rgba(59, 130, 246, 0.2);
+  --accent-rose: #f43f5e;
+  --accent-amber: #f59e0b;
+  
+  --bg-main: #0b1329;
+  --bg-gradient: radial-gradient(circle at 50% 0%, #172554 0%, #0b1329 70%, #080d1c 100%);
+  --card-bg: rgba(23, 37, 84, 0.45);
+  --card-border: rgba(96, 165, 250, 0.18);
+  --card-hover-border: rgba(56, 189, 248, 0.45);
 }
 
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   scroll-behavior: smooth;
-  background-color: #0b0f19;
-  color: #f3f4f6;
+  background: var(--bg-gradient);
+  background-color: #0b1329;
+  color: #f1f5f9;
+  min-height: 100vh;
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, .font-heading {
-  font-family: 'Outfit', sans-serif;
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Outfit', -apple-system, sans-serif;
 }
 
-/* Glassmorphism Classes */
+/* Glassmorphic Surfaces */
 .glass-panel {
-  background: rgba(17, 24, 39, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 28, 64, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(147, 197, 253, 0.16);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.35);
 }
 
 .glass-nav {
-  background: rgba(11, 15, 25, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(11, 19, 41, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(147, 197, 253, 0.12);
 }
 
 .glass-card {
-  background: rgba(17, 24, 39, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(17, 34, 76, 0.5);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(147, 197, 253, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(59, 130, 246, 0.4);
-  box-shadow: 0 12px 30px -10px rgba(59, 130, 246, 0.2);
+  transform: translateY(-5px);
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.3);
+  background: rgba(22, 44, 98, 0.65);
 }
 
-/* Gradients and Text Glow */
-.gradient-text-blue {
-  background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 50%, #818cf8 100%);
+/* Eye-Catching Gradient Typography */
+.gradient-text-hero {
+  background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 35%, #a78bfa 70%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-promo {
+  background: linear-gradient(135deg, #f59e0b 0%, #f97316 40%, #ef4444 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -65,75 +80,95 @@ h1, h2, h3, h4, .font-heading {
   -webkit-text-fill-color: transparent;
 }
 
-.gradient-text-sunset {
-  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #ec4899 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Background Gradients & Glow Blobs */
-.blob-glow {
+/* Glowing Ambient Orbs */
+.orb-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(90px);
   pointer-events: none;
-  opacity: 0.25;
   z-index: 0;
 }
 
-/* Pulsing Badge & Floating Effect */
-@keyframes floatAnimation {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
 .animate-float {
-  animation: floatAnimation 5s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
-@keyframes pulseGlow {
+@keyframes pulseWhatsApp {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4);
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55);
   }
   50% {
-    box-shadow: 0 0 0 14px rgba(37, 211, 102, 0);
+    box-shadow: 0 0 0 16px rgba(37, 211, 102, 0);
   }
 }
 
 .whatsapp-pulse {
-  animation: pulseGlow 2.5s infinite;
+  animation: pulseWhatsApp 2s infinite;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #0b0f19;
-}
-::-webkit-scrollbar-thumb {
-  background: #1f2937;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+/* Promo Tag Ribbon & Badge */
+.promo-badge {
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
 /* Accordion Transition */
 .accordion-content {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.35s ease-out, padding 0.35s ease;
+  transition: max-height 0.35s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
 }
 
 .accordion-item.active .accordion-content {
-  max-height: 500px;
+  max-height: 600px;
+  transition: max-height 0.35s cubic-bezier(1, 0, 1, 0), padding 0.3s ease;
 }
 
 .accordion-item.active .accordion-icon {
   transform: rotate(180deg);
+}
+
+/* Demo Browser Mockup Frame */
+.mockup-browser {
+  border-radius: 1.25rem;
+  overflow: hidden;
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.7);
+  background: #0f1c3f;
+}
+
+.mockup-header {
+  background: #0a142e;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(147, 197, 253, 0.1);
+}
+
+.mockup-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b1329;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e3a8a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
 }

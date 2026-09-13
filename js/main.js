@@ -1,5 +1,7 @@
-// Bubbli.in - Interactive Client-Side Engine
+// Bubbli.in - Main Interactivity Engine
 document.addEventListener('DOMContentLoaded', () => {
+  const WHATSAPP_NUMBER = '919739130926';
+
   // 1. Mobile Menu Toggle
   const menuToggle = document.getElementById('menu-toggle');
   const mobileMenu = document.getElementById('mobile-menu');
@@ -26,11 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = btn.getAttribute('data-tab-target');
 
       tabButtons.forEach(b => {
-        b.classList.remove('active-tab', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-500/25');
+        b.classList.remove('active-tab', 'bg-gradient-to-r', 'from-blue-600', 'to-cyan-600', 'text-white', 'shadow-lg', 'shadow-blue-500/25');
         b.classList.add('bg-slate-800/80', 'text-slate-300', 'hover:bg-slate-800');
       });
 
-      btn.classList.add('active-tab', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-500/25');
+      btn.classList.add('active-tab', 'bg-gradient-to-r', 'from-blue-600', 'to-cyan-600', 'text-white', 'shadow-lg', 'shadow-blue-500/25');
       btn.classList.remove('bg-slate-800/80', 'text-slate-300');
 
       tabPanels.forEach(panel => {
@@ -45,14 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Interactive Website Cost & Turnaround Calculator
+  // 3. Interactive Quote & Turnaround Calculator
   const calcType = document.getElementById('calc-type');
   const calcPages = document.getElementById('calc-pages');
   const calcPagesVal = document.getElementById('calc-pages-val');
   const calcWaBooking = document.getElementById('calc-wa-booking');
   const calcQrMenu = document.getElementById('calc-qr-menu');
   const calcSeo = document.getElementById('calc-seo');
-  const calcSpeed = document.getElementById('calc-speed');
 
   const calcPriceDisplay = document.getElementById('calc-price-display');
   const calcTimeDisplay = document.getElementById('calc-time-display');
@@ -61,56 +62,48 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateCalculator() {
     if (!calcType || !calcPages || !calcPriceDisplay) return;
 
-    const basePrices = {
-      'dentist': 6999,
-      'restaurant': 5999,
-      'billing': 7999,
-      'salon': 4999,
-      'custom': 5499
-    };
-
-    const type = calcType.value || 'dentist';
     const pages = parseInt(calcPages.value, 10) || 1;
-    if (calcPagesVal) calcPagesVal.textContent = pages === 1 ? '1 Page (Landing Page)' : `${pages} Pages`;
+    const type = calcType.value || 'dentist';
 
-    let total = basePrices[type] || 5000;
-    
-    // Add page costs (beyond 1 page)
-    if (pages > 1) {
-      total += (pages - 1) * 800;
+    if (calcPagesVal) {
+      calcPagesVal.textContent = pages === 1 ? '1 Page (Special Launch Deal)' : `${pages} Pages`;
     }
 
-    // Addons
-    if (calcWaBooking && calcWaBooking.checked) total += 999;
-    if (calcQrMenu && calcQrMenu.checked) total += 1499;
-    if (calcSeo && calcSeo.checked) total += 1499;
-    if (calcSpeed && calcSpeed.checked) total += 999;
-
-    let days = pages <= 2 ? 3 : (pages <= 5 ? 5 : 7);
-
-    calcPriceDisplay.textContent = `₹${total.toLocaleString('en-IN')}`;
-    if (calcTimeDisplay) calcTimeDisplay.textContent = `${days} Days Delivery`;
-
-    // Update WhatsApp CTA button with tailored message
     const businessNameMap = {
-      'dentist': 'Dentist / Healthcare Clinic',
+      'dentist': 'Dental Clinic',
       'restaurant': 'Restaurant / Cafe',
-      'billing': 'Retail / Billing / Store',
+      'retail': 'Retail Store / Boutique',
       'salon': 'Salon & Spa',
       'custom': 'Local Business'
     };
 
     const selectedIndustry = businessNameMap[type] || 'Local Business';
-    const msg = `Hi Bubbli! I used the website cost calculator for my *${selectedIndustry}* (${pages} pages). Estimated quote: ₹${total.toLocaleString('en-IN')}. I would like to get started!`;
-    const encoded = encodeURIComponent(msg);
-    
-    if (calcWhatsappBtn) {
-      calcWhatsappBtn.href = `https://wa.me/919999999999?text=${encoded}`;
+
+    if (pages === 1) {
+      // Special Promotional Launch Deal
+      calcPriceDisplay.innerHTML = `₹4,999 <span class="text-xs text-amber-400 font-bold block uppercase tracking-wider mt-1">Special Launch Deal 🔥</span>`;
+      if (calcTimeDisplay) calcTimeDisplay.textContent = '3 Days Delivery';
+
+      const msg = `Hi Bubbli! I want to claim the *₹4,999 Special Launch Deal* for my *${selectedIndustry}* landing page. Let's discuss!`;
+      if (calcWhatsappBtn) {
+        calcWhatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+        calcWhatsappBtn.innerHTML = `<span>Claim ₹4,999 Launch Deal on WhatsApp &rarr;</span>`;
+      }
+    } else {
+      // Custom Multi-Page Quote
+      calcPriceDisplay.innerHTML = `<span class="text-2xl sm:text-3xl font-bold text-cyan-300">Custom Quote</span><span class="text-xs text-slate-400 block mt-1">Tailored for ${pages} Pages</span>`;
+      let days = pages <= 3 ? 4 : (pages <= 6 ? 6 : 8);
+      if (calcTimeDisplay) calcTimeDisplay.textContent = `~${days} Days Delivery`;
+
+      const msg = `Hi Bubbli! I am looking for a custom *${pages}-page website* for my *${selectedIndustry}*. Please share a customized quote and timeline!`;
+      if (calcWhatsappBtn) {
+        calcWhatsappBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+        calcWhatsappBtn.innerHTML = `<span>Get Custom Quote on WhatsApp &rarr;</span>`;
+      }
     }
   }
 
-  // Bind calculator events
-  const calcInputs = [calcType, calcPages, calcWaBooking, calcQrMenu, calcSeo, calcSpeed];
+  const calcInputs = [calcType, calcPages, calcWaBooking, calcQrMenu, calcSeo];
   calcInputs.forEach(input => {
     if (input) {
       input.addEventListener('input', updateCalculator);
@@ -126,19 +119,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const item = header.parentElement;
       const isOpen = item.classList.contains('active');
 
-      // Close all accordion items
       document.querySelectorAll('.accordion-item').forEach(i => {
         i.classList.remove('active');
       });
 
-      // Toggle current item
       if (!isOpen) {
         item.classList.add('active');
       }
     });
   });
 
-  // 5. Contact Form Handler (Opens WhatsApp with message)
+  // 5. Contact Form Handler (Direct to WhatsApp)
   const contactForm = document.getElementById('contact-form');
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
@@ -148,8 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const biz = document.getElementById('contact-biz')?.value || 'Business';
       const note = document.getElementById('contact-note')?.value || '';
 
-      const text = `Hi Bubbli Team! My name is ${name} (${phone}), business: ${biz}. Note: ${note}`;
-      window.open(`https://wa.me/919999999999?text=${encodeURIComponent(text)}`, '_blank');
+      const text = `Hi Bubbli! My name is ${name} (Phone: ${phone}). I run "${biz}". Inquiry: ${note}`;
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
     });
   }
 });
