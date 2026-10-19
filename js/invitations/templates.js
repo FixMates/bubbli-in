@@ -4239,9 +4239,9 @@
     } else if (id.includes('mehendi') || id.includes('sangeet')) {
       t.samplePhoto = 'assets/images/wedding-mehendi-art.svg';
     } else if (id.includes('nikah') || id.includes('mughal') || id.includes('mehrab')) {
-      t.samplePhoto = 'assets/images/wedding-nikah-mehrab.svg';
+      t.samplePhoto = 'assets/images/wedding-ai-nikah.webp';
     } else if (id.includes('christian') || id.includes('matrimony') || id.includes('chapel')) {
-      t.samplePhoto = 'assets/images/wedding-christian-chapel.svg';
+      t.samplePhoto = 'assets/images/wedding-ai-chapel.webp';
     } else if (id.includes('safari') || id.includes('wild-one')) {
       t.samplePhoto = 'assets/images/birthday-safari-wild-one.svg';
     } else if (id.includes('princess') || id.includes('fairy')) {
@@ -4262,12 +4262,14 @@
       t.samplePhoto = 'assets/images/corporate-summit-abstract.svg';
     } else if (events.includes('wedding')) {
       if (styles.includes('south-indian') || styles.includes('tamil') || styles.includes('telugu') || styles.includes('kannada') || styles.includes('malayalam')) {
-        t.samplePhoto = 'assets/images/wedding-south-indian-couple.jpg';
+        t.samplePhoto = 'assets/images/wedding-ai-south-indian.webp';
+      } else if (id.includes('rajputana') || id.includes('royal') || styles.includes('regal')) {
+        t.samplePhoto = 'assets/images/wedding-ai-royal-courtyard.webp';
       } else {
-        t.samplePhoto = 'assets/images/wedding-royal-rajputana-couple.jpg';
+        t.samplePhoto = 'assets/images/wedding-ai-south-indian.webp';
       }
     } else if (events.includes('engagement')) {
-      t.samplePhoto = 'assets/images/wedding-royal-rajputana-couple.jpg';
+      t.samplePhoto = 'assets/images/wedding-ai-royal-courtyard.webp';
     } else if (events.includes('first-birthday') || events.includes('kids-birthday')) {
       t.samplePhoto = 'assets/images/birthday-baby-boy.jpg';
     } else if (events.includes('adult-birthday') || events.includes('milestone-birthday')) {
@@ -4287,7 +4289,7 @@
     } else if (events.includes('anniversary')) {
       t.samplePhoto = 'assets/images/anniversary-golden-jubilee.svg';
     } else {
-      t.samplePhoto = 'assets/images/wedding-south-indian-couple.jpg';
+      t.samplePhoto = 'assets/images/wedding-ai-south-indian.webp';
     }
   });
 

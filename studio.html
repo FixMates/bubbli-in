@@ -594,7 +594,7 @@
     </section>
 
     <!-- ========================================================
-         STEP 5: PUBLISH & SHARE (SUCCESS)
+         STEP 5: PUBLISH & SHARE
          ======================================================== -->
     <section id="step-section-5" class="hidden space-y-6">
 
@@ -604,9 +604,9 @@
         </div>
 
         <div class="space-y-1">
-          <h2 class="text-xl sm:text-2xl font-extrabold text-white font-heading">Your Invitation is Live!</h2>
-          <p class="text-xs text-slate-300">
-            A permanent mobile invitation page has been created. Anyone with this link can view the card, directions, and RSVP.
+          <h2 id="publish-heading" class="text-xl sm:text-2xl font-extrabold text-white font-heading">Saving your invitation…</h2>
+          <p id="publish-description" class="text-xs text-slate-300">
+            Your invitation is ready. We’re publishing it and creating a short link now.
           </p>
         </div>
 
@@ -622,6 +622,7 @@
             </button>
           </div>
           <p id="publish-link-status" class="text-[10px] text-slate-400" role="status" aria-live="polite">Creating your short link…</p>
+          <button id="btn-retry-publish" type="button" class="hidden text-xs text-cyan-300 hover:text-cyan-200 underline font-semibold">Try again</button>
         </div>
 
         <!-- Primary Action: WhatsApp Share -->

@@ -1,6 +1,6 @@
 /**
  * Bubbli Invitation Studio 2.0 - Storage & Persistence Engine
- * Supports IndexedDB, LocalStorage, and URL-Safe Compressed Self-Contained Payloads.
+ * Supports browser drafts, local records, and compact online invitation links.
  */
 
 (function (root, factory) {
@@ -60,17 +60,16 @@
   /**
    * Generate clean slug ID
    */
-  function generateUniqueId(names = '', eventType = 'event') {
-    const cleanNames = names.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase().slice(0, 20).replace(/^-+|-+$/g, '') || 'celebration';
-    const cleanEvent = eventType.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase().slice(0, 10);
+  function generateUniqueId() {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
     const randomBytes = new Uint8Array(10);
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
       crypto.getRandomValues(randomBytes);
     } else {
       for (let i = 0; i < randomBytes.length; i++) randomBytes[i] = Math.floor(Math.random() * 256);
     }
-    const randomHex = Array.from(randomBytes, byte => byte.toString(16).padStart(2, '0')).join('');
-    return `${cleanEvent}-${cleanNames}-${randomHex}`;
+    // A compact, non-identifying slug keeps every guest link clean and private.
+    return Array.from(randomBytes, byte => alphabet[byte % alphabet.length]).join('');
   }
 
   /**
@@ -182,42 +181,40 @@
         console.warn('LocalStorage save error:', err);
       }
 
-      // Keep a self-contained link available for legacy or offline sharing.
-      const compressedPayload = compressData({
-        id: id,
-        t: templateId,
-        d: eventData,
-        ar: options.aspectRatio || '4:5'
-      });
-
-      // Public URL formulation
-      // Resolves properly across root, local development, and bubbli.in
-      const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
-      const shareUrl = `${baseUrl}invite/index.html?id=${encodeURIComponent(id)}`;
-      const fallbackShareUrl = `${shareUrl}&d=${compressedPayload}`;
+      // The invitation page reads the saved record from the Worker API. Never
+      // place the invitation contents in the URL: it exposes private details
+      // and makes links look untrustworthy.
+      const shareUrl = new URL('invite/', window.location.href);
+      shareUrl.searchParams.set('id', id);
 
       return {
         id: id,
         editSecret: editSecret,
-        shareUrl: shareUrl,
-        fallbackShareUrl: fallbackShareUrl,
-        compressedPayload: compressedPayload,
+        shareUrl: shareUrl.href,
         record: record
       };
     },
 
     saveInvitationOnline: async function (record) {
-      const response = await fetch(invitationApiUrl(''), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: record.id,
-          templateId: record.templateId,
-          eventData: record.eventData,
-          aspectRatio: record.aspectRatio,
-          publishedAt: record.publishedAt
-        })
-      });
+      const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeout = controller ? setTimeout(() => controller.abort(), 12000) : null;
+      let response;
+      try {
+        response = await fetch(invitationApiUrl(''), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: record.id,
+            templateId: record.templateId,
+            eventData: record.eventData,
+            aspectRatio: record.aspectRatio,
+            publishedAt: record.publishedAt
+          }),
+          ...(controller ? { signal: controller.signal } : {})
+        });
+      } finally {
+        if (timeout) clearTimeout(timeout);
+      }
       if (!response.ok) throw new Error(`Invitation storage failed (${response.status})`);
       return response.json();
     },

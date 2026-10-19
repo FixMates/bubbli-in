@@ -68,16 +68,8 @@ export default {
         return json({ error: 'Invalid invitation data' }, 400, request);
       }
 
-      const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
-      const rateKey = `rate:${clientIp}`;
-      const rate = await env.INVITATIONS.get(rateKey, 'json');
-      const now = Date.now();
-      const currentRate = rate && now - rate.startedAt < 3600000 ? rate : { startedAt: now, count: 0 };
-      if (currentRate.count >= MAX_CREATES_PER_HOUR) return json({ error: 'Too many invitations. Try again later.' }, 429, request);
-
       const key = `invite:${invitation.id}`;
-      if (await env.INVITATIONS.get(key)) return json({ error: 'This invitation link already exists' }, 409, request);
-
+      const now = Date.now();
       const record = {
         id: invitation.id,
         templateId: invitation.templateId,
@@ -85,6 +77,26 @@ export default {
         aspectRatio: invitation.aspectRatio || '4:5',
         publishedAt: Number(invitation.publishedAt) || now
       };
+
+      // A retry after a dropped response should finish cleanly without creating
+      // a duplicate or overwriting an unrelated invitation with the same ID.
+      const existing = await env.INVITATIONS.get(key, 'json');
+      if (existing) {
+        const sameInvitation = existing.templateId === record.templateId &&
+          existing.aspectRatio === record.aspectRatio &&
+          JSON.stringify(existing.eventData) === JSON.stringify(record.eventData) &&
+          existing.publishedAt === record.publishedAt;
+        return sameInvitation
+          ? json({ id: invitation.id, alreadyExists: true }, 200, request)
+          : json({ error: 'This invitation link already exists' }, 409, request);
+      }
+
+      const clientIp = request.headers.get('CF-Connecting-IP') || 'unknown';
+      const rateKey = `rate:${clientIp}`;
+      const rate = await env.INVITATIONS.get(rateKey, 'json');
+      const currentRate = rate && now - rate.startedAt < 3600000 ? rate : { startedAt: now, count: 0 };
+      if (currentRate.count >= MAX_CREATES_PER_HOUR) return json({ error: 'Too many invitations. Try again later.' }, 429, request);
+
       await Promise.all([
         env.INVITATIONS.put(key, JSON.stringify(record)),
         env.INVITATIONS.put(rateKey, JSON.stringify({ startedAt: currentRate.startedAt, count: currentRate.count + 1 }), {

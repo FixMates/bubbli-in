@@ -23,6 +23,7 @@ async function main() {
       '.js': 'application/javascript',
       '.png': 'image/png',
       '.jpg': 'image/jpeg',
+      '.webp': 'image/webp',
       '.svg': 'image/svg+xml'
     };
     res.writeHead(200, { 'Content-Type': contentTypes[ext] || 'text/plain' });
@@ -91,6 +92,34 @@ async function main() {
     }
 
     await send('Page.enable');
+    // Keep visual QA self-contained: publication calls are handled locally so
+    // screenshots never create test invitations in production KV.
+    let mockId = 1;
+    ws.addEventListener('message', event => {
+      const message = JSON.parse(event.data);
+      if (message.method !== 'Fetch.requestPaused') return;
+      const request = message.params.request;
+      const isPreflight = request.method === 'OPTIONS';
+      const isCreate = request.method === 'POST' && request.url.endsWith('/api/invitations');
+      const payload = isCreate ? JSON.parse(request.postData || '{}') : {};
+      const responseBody = isCreate ? JSON.stringify({ id: payload.id }) : '';
+      ws.send(JSON.stringify({
+        id: mockId++,
+        method: 'Fetch.fulfillRequest',
+        params: {
+          requestId: message.params.requestId,
+          responseCode: isPreflight ? 204 : (isCreate ? 201 : 404),
+          responseHeaders: [
+            { name: 'Access-Control-Allow-Origin', value: 'http://127.0.0.1:8082' },
+            { name: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS' },
+            { name: 'Access-Control-Allow-Headers', value: 'Content-Type' },
+            { name: 'Content-Type', value: 'application/json' }
+          ],
+          body: Buffer.from(responseBody).toString('base64')
+        }
+      }));
+    });
+    await send('Fetch.enable', { patterns: [{ urlPattern: '*bubbli-invitation-api.ubbli.workers.dev/api/invitations*', requestStage: 'Request' }] });
 
     async function screenshot(name, url, width, height, fullPage = false) {
       await send('Emulation.setDeviceMetricsOverride', {
@@ -136,6 +165,15 @@ async function main() {
     await screenshot('studio_step3_personalise_desktop_1280', 'http://127.0.0.1:8082/studio.html?step=3', 1280, 850);
     await screenshot('studio_step4_preview_375', 'http://127.0.0.1:8082/studio.html?step=4', 375, 812);
     await screenshot('studio_step5_share_375', 'http://127.0.0.1:8082/studio.html?step=5', 375, 812);
+    const publishedLink = await send('Runtime.evaluate', {
+      expression: `({link: document.getElementById('publish-link-input')?.value, status: document.getElementById('publish-link-status')?.textContent})`,
+      returnByValue: true
+    });
+    const shareState = publishedLink.result.value;
+    if (!shareState.link || !shareState.link.startsWith('http://127.0.0.1:8082/invite/?id=') || shareState.link.includes('&d=')) {
+      throw new Error(`Short-link creation QA failed: ${JSON.stringify(shareState)}`);
+    }
+    console.log(`[QA] Invitation created with a clean short link: ${shareState.link}`);
 
     // Pricing Modal
     await send('Page.navigate', { url: 'http://127.0.0.1:8082/studio.html?step=3' });

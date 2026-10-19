@@ -251,18 +251,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 8. Conversion Tracking helper for analytics
-  document.querySelectorAll('a[href*="wa.me"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (typeof gtag === 'function') {
-        gtag('event', 'whatsapp_click', {
-          event_category: 'Lead',
-          event_label: btn.href
-        });
-      }
-      if (typeof fbq === 'function') {
-        fbq('track', 'Contact');
-      }
-    });
-  });
 });

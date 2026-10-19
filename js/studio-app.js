@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
   let currentTemplateId = 'wedding-south-indian-temple';
   let currentAspectRatio = '4:5';
   let isFormCustomized = false;
+  let activePublishResult = null;
+  let activePublishSignature = '';
 
   // Active invitation data model initialized with occasion-specific defaults
   let activeData = BubbliWording.getSampleDataForEvent('wedding');
@@ -726,40 +728,84 @@ document.addEventListener('DOMContentLoaded', function () {
   // STEP 5: PUBLISH & SHARE
   // ----------------------------------------------------
   async function renderPublishScreen() {
-    const publishResult = BubbliStorage.publishInvitation(currentTemplateId, activeData, {
-      aspectRatio: currentAspectRatio
-    });
+    const signature = JSON.stringify({ templateId: currentTemplateId, data: activeData, aspectRatio: currentAspectRatio });
+    if (!activePublishResult || activePublishSignature !== signature) {
+      activePublishResult = BubbliStorage.publishInvitation(currentTemplateId, activeData, {
+        aspectRatio: currentAspectRatio
+      });
+      activePublishSignature = signature;
+    }
+    const publishResult = activePublishResult;
 
     // Prefill WhatsApp text
     const names = activeData.coupleNames || 'Our Celebration';
     const date = activeData.date || '';
     const venue = activeData.venue || '';
     const linkStatus = document.getElementById('publish-link-status');
+    const publishHeading = document.getElementById('publish-heading');
+    const publishDescription = document.getElementById('publish-description');
+    const retryButton = document.getElementById('btn-retry-publish');
     const updateShareLink = (url) => {
       if (publishLinkInput) publishLinkInput.value = url;
-      if (btnViewPublicPage) btnViewPublicPage.href = url;
-      const waText = encodeURIComponent(
-        `✨ You are joyfully invited!\n\n` +
-        `🎉 ${activeData.headline || 'Celebration Invitation'}\n` +
-        `👤 ${names}\n` +
-        `📅 ${date}\n` +
-        `📍 ${venue}\n\n` +
-        `Tap below to view your invitation:\n${url}`
-      );
-      if (btnWhatsappShare) btnWhatsappShare.href = `https://wa.me/?text=${waText}`;
+      if (btnViewPublicPage) {
+        if (url) btnViewPublicPage.href = url;
+        else btnViewPublicPage.removeAttribute('href');
+        btnViewPublicPage.setAttribute('aria-disabled', String(!url));
+        btnViewPublicPage.tabIndex = url ? 0 : -1;
+        btnViewPublicPage.classList.toggle('opacity-50', !url);
+        btnViewPublicPage.classList.toggle('pointer-events-none', !url);
+      }
+      if (btnCopyLink) {
+        btnCopyLink.disabled = !url;
+        btnCopyLink.classList.toggle('opacity-50', !url);
+        btnCopyLink.classList.toggle('cursor-not-allowed', !url);
+      }
+      if (btnWhatsappShare) {
+        if (url) btnWhatsappShare.href = `https://wa.me/?text=${encodeURIComponent(
+          `✨ You are joyfully invited!\n\n` +
+          `🎉 ${activeData.headline || 'Celebration Invitation'}\n` +
+          `👤 ${names}\n` +
+          `📅 ${date}\n` +
+          `📍 ${venue}\n\n` +
+          `Tap below to view your invitation:\n${url}`
+        )}`;
+        else btnWhatsappShare.removeAttribute('href');
+        btnWhatsappShare.setAttribute('aria-disabled', String(!url));
+        btnWhatsappShare.tabIndex = url ? 0 : -1;
+        btnWhatsappShare.classList.toggle('opacity-50', !url);
+        btnWhatsappShare.classList.toggle('pointer-events-none', !url);
+      }
     };
+    const updateShareMessage = (message) => {
+      if (linkStatus) linkStatus.textContent = message;
+    };
+    const saveShortLink = async () => {
+      updateShareLink('');
+      if (publishHeading) publishHeading.textContent = 'Saving your invitation…';
+      updateShareMessage('Creating your short link…');
+      if (retryButton) retryButton.classList.add('hidden');
+      try {
+        await BubbliStorage.saveInvitationOnline(publishResult.record);
+        updateShareLink(publishResult.shareUrl);
+        if (publishHeading) publishHeading.textContent = 'Your Invitation Is Live!';
+        if (publishDescription) publishDescription.textContent = 'Guests can open the short link to view your card, directions, and RSVP.';
+        updateShareMessage('Short link ready to share.');
+      } catch (error) {
+        console.warn('Could not save invitation online.', error);
+        if (publishHeading) publishHeading.textContent = 'Your invitation is not online yet';
+        if (publishDescription) publishDescription.textContent = 'Your card is saved as a draft. Retry the connection to publish it and get a share link.';
+        updateShareMessage('We couldn’t connect. Check your internet and try again.');
+        if (retryButton) retryButton.classList.remove('hidden');
+      }
+    };
+    if (retryButton) retryButton.onclick = saveShortLink;
 
-    // Keep a self-contained link ready as a fallback while saving the branded short link.
-    updateShareLink(publishResult.fallbackShareUrl);
-    if (linkStatus) linkStatus.textContent = 'Creating your short link…';
-    try {
-      await BubbliStorage.saveInvitationOnline(publishResult.record);
-      updateShareLink(publishResult.shareUrl);
-      if (linkStatus) linkStatus.textContent = 'Short link ready to share.';
-    } catch (error) {
-      console.warn('Could not save invitation online; using a self-contained link.', error);
-      if (linkStatus) linkStatus.textContent = 'Short links are temporarily unavailable. This full link still works.';
+    /* Share controls stay unavailable until the online record is confirmed. */
+    updateShareLink('');
+    if (linkStatus) {
+      linkStatus.textContent = 'Creating your short link…';
     }
+    await saveShortLink();
 
     if (typeof BubbliAnalytics !== 'undefined') {
       BubbliAnalytics.track(BubbliAnalytics.EVENTS.INVITATION_PUBLISHED, {
@@ -772,11 +818,18 @@ document.addEventListener('DOMContentLoaded', function () {
   btnCopyLink?.addEventListener('click', () => {
     if (!publishLinkInput) return;
     publishLinkInput.select();
-    navigator.clipboard.writeText(publishLinkInput.value).then(() => {
+    const copyPromise = navigator.clipboard?.writeText
+      ? navigator.clipboard.writeText(publishLinkInput.value)
+      : Promise.reject(new Error('Clipboard API unavailable'));
+    copyPromise.then(() => {
       showToast('Invitation link copied to clipboard!');
       if (typeof BubbliAnalytics !== 'undefined') {
         BubbliAnalytics.track(BubbliAnalytics.EVENTS.INVITATION_SHARED, { channel: 'copy_link' });
       }
+    }).catch(() => {
+      publishLinkInput.select();
+      const copied = document.execCommand && document.execCommand('copy');
+      showToast(copied ? 'Invitation link copied to clipboard!' : 'Select the link and copy it.');
     });
   });
 

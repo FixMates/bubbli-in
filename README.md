@@ -40,7 +40,7 @@ Bubbli/
 8. **Testimonials & Trust Badges**: 5-star verified review cards and security trust indicators.
 9. **Interactive Quote & Timeline Calculator**: Real-time pricing and delivery turnaround estimates.
 10. **Enhanced Contact Form**: Dual-action form supporting AJAX submission via Formspree and immediate WhatsApp handoff with client-side validation.
-11. **SEO & Structured Data**: Complete OpenGraph meta tags, Twitter Cards, Google Analytics 4 placeholder, Facebook Pixel placeholder, and Schema.org `LocalBusiness` JSON-LD.
+11. **SEO & Structured Data**: Complete OpenGraph meta tags, Twitter Cards, and Schema.org `LocalBusiness` JSON-LD. No ad network or tracking pixel is installed.
 
 ---
 
@@ -60,7 +60,7 @@ git push origin main
 
 ## 🔗 Branded invitation short links
 
-The invitation studio stores invitation data in Cloudflare KV and shares links in the form `https://bubbli.in/invite/?id=...`. GitHub Pages serves the static site; a Cloudflare Worker on `workers.dev` handles the invitation API. This keeps the existing GoDaddy DNS setup unchanged.
+The invitation studio stores invitation data in Cloudflare KV and shares concise links in the form `https://bubbli.in/invite/?id=abc123...`. GitHub Pages serves the static site; a Cloudflare Worker on `workers.dev` handles the invitation API. Invitation details stay in storage and are never embedded in shared URLs. This keeps the existing GoDaddy DNS setup unchanged.
 
 To enable short links on a Cloudflare account that manages the `bubbli.in` DNS zone:
 
@@ -69,7 +69,7 @@ To enable short links on a Cloudflare account that manages the `bubbli.in` DNS z
 3. Set the `id` in the `INVITATIONS` binding in `wrangler.toml` and `window.BUBBLI_INVITATION_API_BASE` in `js/invitations/api-config.js` to the deployment values, then push the change to `main` so the studio and invitation pages can call the API.
 4. Keep the site's GitHub Pages deployment on `main`.
 
-The Worker limits invitation uploads to 2 MiB and 20 creations per hour per IP. Invitation details are public to anyone with the link, as they are in the current self-contained links. Until the Worker and KV namespaces are deployed and the API URL is configured, the studio keeps sharing its existing full, self-contained URL so guest links continue to work.
+The Worker limits invitation uploads to 2 MiB and 20 creations per hour per IP. Invitation details are public to anyone with the link. The studio only marks an invitation live after the Worker confirms it is saved. If the connection fails, it offers a retry instead of generating a long, broken fallback link.
 
 ---
 
@@ -80,8 +80,6 @@ The Worker limits invitation uploads to 2 MiB and 20 creations per hour per IP. 
 | **WhatsApp Lead Desk** | `+91 97391 30926` | `index.html`, `js/main.js`, demo pages | Direct instant lead capture |
 | **Contact Email** | `support@bubbli.in` | `index.html`, `privacy-policy.html`, `terms-of-service.html` | Official support & inquiries |
 | **Formspree Endpoint** | `https://formspree.io/f/xbjnbqwv` | `js/main.js` | Form lead capture email notifications (Replace with your Formspree ID if desired) |
-| **Google Analytics 4** | `G-XXXXXXXXXX` | `index.html` (line 52) | Website traffic and visitor analytics (Replace with your GA4 Measurement ID) |
-| **Facebook Pixel** | `0000000000000000` | `index.html` (line 62) | Meta ad retargeting and conversion tracking |
 | **Tailwind CSS** | CDN v3 | `<head>` across all HTML files | Utility styling framework |
 | **Google Fonts** | `Outfit`, `Plus Jakarta Sans` | `css/style.css` | Typography |
 
