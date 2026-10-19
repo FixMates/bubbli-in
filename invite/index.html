@@ -525,16 +525,14 @@
 
       // 4. Photo Moments Gallery
       const galleryCarousel = document.getElementById('gallery-carousel');
-      const samplePhotos = [
-        template.samplePhoto || '../assets/images/wedding-south-indian-couple.jpg',
-        '../assets/images/wedding-royal-rajputana-couple.jpg',
-        '../assets/images/wedding-haldi-ceremony.svg'
-      ];
+      const gallerySection = document.getElementById('gallery-section');
+      const galleryPhotos = Array.isArray(eventData.photos?.gallery) ? eventData.photos.gallery.filter(url => typeof url === 'string' && url.startsWith('data:image/')) : [];
 
-      if (galleryCarousel) {
-        galleryCarousel.innerHTML = samplePhotos.map(url => `
+      if (galleryCarousel && gallerySection) {
+        gallerySection.classList.toggle('hidden', galleryPhotos.length === 0);
+        galleryCarousel.innerHTML = galleryPhotos.map((url, index) => `
           <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 border border-slate-700 shadow-md">
-            <img src="${url}" alt="Memory" class="w-full h-full object-cover" />
+            <img src="${escapeHtml(url)}" alt="Celebration moment ${index + 1}" class="w-full h-full object-cover" />
           </div>
         `).join('');
       }

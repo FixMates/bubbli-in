@@ -56,7 +56,7 @@
 
     if (data && data.photos && Object.keys(data.photos).length > 0) {
       const userPhoto = data.photos.couple || data.photos.hero || data.photos.celebrant ||
-        data.photos.baby || data.photos.mother || data.photos.primary || Object.values(data.photos)[0];
+        data.photos.baby || data.photos.mother || data.photos.primary;
       if (userPhoto && userPhoto.url) {
         return {
           url: normalizeAssetUrl(userPhoto.url),

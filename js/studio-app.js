@@ -88,6 +88,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const focalYVal = document.getElementById('focal-y-val');
   const zoomVal = document.getElementById('zoom-val');
   const btnRemovePhoto = document.getElementById('btn-remove-photo');
+  const galleryFileInput = document.getElementById('gallery-file-input');
+  const btnTriggerGalleryUpload = document.getElementById('btn-trigger-gallery-upload');
+  const galleryPhotoPreviews = document.getElementById('gallery-photo-previews');
 
   // Design palettes & typography
   const curatedPalettesContainer = document.getElementById('curated-palettes-container');
@@ -438,7 +441,50 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
       photoControlsPanel?.classList.add('hidden');
     }
+    renderGalleryPhotoPreviews();
   }
+
+  function renderGalleryPhotoPreviews() {
+    if (!galleryPhotoPreviews) return;
+    const gallery = Array.isArray(activeData.photos?.gallery) ? activeData.photos.gallery : [];
+    galleryPhotoPreviews.replaceChildren();
+    gallery.forEach((url, index) => {
+      const preview = document.createElement('div');
+      preview.className = 'relative w-16 h-16 rounded-lg overflow-hidden border border-slate-700';
+      const image = document.createElement('img');
+      image.src = url;
+      image.alt = `Celebration photo ${index + 1}`;
+      image.className = 'w-full h-full object-cover';
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.dataset.removeGalleryPhoto = String(index);
+      remove.setAttribute('aria-label', `Remove celebration photo ${index + 1}`);
+      remove.className = 'absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/80 text-white text-xs';
+      remove.textContent = '×';
+      preview.append(image, remove);
+      galleryPhotoPreviews.appendChild(preview);
+    });
+    if (btnTriggerGalleryUpload) {
+      btnTriggerGalleryUpload.disabled = gallery.length >= 3;
+      btnTriggerGalleryUpload.textContent = gallery.length >= 3 ? '3 photos added' : 'Add celebration photos';
+      btnTriggerGalleryUpload.classList.toggle('opacity-50', gallery.length >= 3);
+    }
+  }
+
+  function savePhotoChanges() {
+    BubbliStorage.saveDraft({ templateId: currentTemplateId, eventId: currentEventId, aspectRatio: currentAspectRatio, data: activeData });
+    updateDesktopPreview();
+  }
+
+  galleryPhotoPreviews?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-remove-gallery-photo]');
+    if (!button) return;
+    activeData.photos = activeData.photos || {};
+    activeData.photos.gallery.splice(Number(button.dataset.removeGalleryPhoto), 1);
+    if (!activeData.photos.gallery.length) delete activeData.photos.gallery;
+    renderGalleryPhotoPreviews();
+    savePhotoChanges();
+  });
 
   function syncActiveDataFromInputs() {
     isFormCustomized = true;
@@ -516,19 +562,44 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       showToast('Compressing image for fast mobile loading...');
       const compressedDataUrl = await BubbliStorage.compressImage(file, 900, 0.82);
-      activeData.photos = {
-        hero: {
+      activeData.photos = activeData.photos || {};
+      activeData.photos.hero = {
           url: compressedDataUrl,
           focalX: 50,
           focalY: 50,
           zoom: 1
-        }
       };
       photoControlsPanel?.classList.remove('hidden');
-      updateDesktopPreview();
+      savePhotoChanges();
       showToast('Photo framed beautifully!');
     } catch (err) {
       showToast('Could not process photo');
+    }
+  });
+
+  btnTriggerGalleryUpload?.addEventListener('click', () => galleryFileInput?.click());
+  galleryFileInput?.addEventListener('change', async (event) => {
+    const files = Array.from(event.target.files || []).filter(file => file.type.startsWith('image/'));
+    if (!files.length) return;
+    const gallery = Array.isArray(activeData.photos?.gallery) ? activeData.photos.gallery : [];
+    const remaining = 3 - gallery.length;
+    if (remaining <= 0) {
+      showToast('You can add up to 3 celebration photos.');
+      event.target.value = '';
+      return;
+    }
+    try {
+      showToast('Preparing your celebration photos...');
+      const compressed = await Promise.all(files.slice(0, remaining).map(file => BubbliStorage.compressImage(file, 800, 0.72)));
+      activeData.photos = activeData.photos || {};
+      activeData.photos.gallery = gallery.concat(compressed);
+      renderGalleryPhotoPreviews();
+      savePhotoChanges();
+      showToast('Celebration photos added!');
+    } catch (err) {
+      showToast('Could not process one or more photos');
+    } finally {
+      event.target.value = '';
     }
   });
 
@@ -560,10 +631,11 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   btnRemovePhoto?.addEventListener('click', () => {
-    activeData.photos = {};
+    if (activeData.photos) delete activeData.photos.hero;
+    if (activeData.photos && !Object.keys(activeData.photos).length) activeData.photos = {};
     photoControlsPanel?.classList.add('hidden');
     if (photoFileInput) photoFileInput.value = '';
-    updateDesktopPreview();
+    savePhotoChanges();
     showToast('Photo removed. Elegant typographic layout restored.');
   });
 
